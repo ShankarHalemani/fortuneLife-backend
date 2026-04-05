@@ -21,13 +21,13 @@ public class SchemeDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@NotBlank
 	private String schemeImage;
 
 	@NotEmpty(message = "Description is required")
 	@Lob
-	@Column(nullable = false, columnDefinition = "LONGTEXT")
+	@Column(nullable = false, columnDefinition = "TEXT")
 	private String description;
 
 	@PositiveOrZero(message = "Minimum amount must be a non-negative number")
@@ -67,7 +67,7 @@ public class SchemeDetails {
 	private Double installmentCommissionRatio;
 
 	@ManyToMany(cascade = { CascadeType.ALL })
-	@JoinTable(name="schemeDetail_documents" ,joinColumns = @JoinColumn(name = "detailsId"), inverseJoinColumns = @JoinColumn(name = "documentId"))
+	@JoinTable(name = "schemeDetail_documents", joinColumns = @JoinColumn(name = "detailsId"), inverseJoinColumns = @JoinColumn(name = "documentId"))
 	private Set<SchemeDocument> documents = new HashSet<>();
 
 }
