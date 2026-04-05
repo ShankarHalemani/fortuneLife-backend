@@ -6,6 +6,7 @@
   },
   "variable": [
     { "key": "baseUrl", "value": "http://localhost:8082/fortuneLife" },
+    { "key": "devUrl", "value": "https://fortunelife-backend.onrender.com/fortuneLife" },
     { "key": "adminToken", "value": "" },
     { "key": "employeeToken", "value": "" },
     { "key": "customerToken", "value": "" },
@@ -15,334 +16,449 @@
     {
       "name": "1. Auth",
       "item": [
+        { "name": "1.01 Register Admin", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{devUrl}}/auth/register?tempRole=ADMIN", "host": ["{{devUrl}}"], "path": ["auth", "register"], "query": [{ "key": "tempRole", "value": "ADMIN" }] }, "body": { "mode": "raw", "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Admin\",\n  \"username\": \"john@admin1\",\n  \"password\": \"Admin@1234\",\n  \"email\": \"johnadmin@example.com\",\n  \"mobileNumber\": \"9876543210\",\n  \"gender\": \"MALE\",\n  \"dateOfBirth\": \"1990-05-15\"\n}" } } },
+        { "name": "1.02 Login as Admin", "event": [{ "listen": "test", "script": { "exec": ["var json = pm.response.json();\npm.collectionVariables.set('adminToken', json.accessToken);"] } }], "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{devUrl}}/auth/login", "host": ["{{devUrl}}"], "path": ["auth", "login"] }, "body": { "mode": "raw", "raw": "{\n  \"usernameOrEmail\": \"john@admin1\",\n  \"password\": \"Admin@1234\",\n  \"role\": \"ADMIN\"\n}" } } },
+        { "name": "1.03 Register Agent", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{devUrl}}/auth/register?tempRole=AGENT", "host": ["{{devUrl}}"], "path": ["auth", "register"], "query": [{ "key": "tempRole", "value": "AGENT" }] }, "body": { "mode": "raw", "raw": "{\n  \"firstName\": \"Mike\",\n  \"lastName\": \"Agent\",\n  \"username\": \"mike@agent1\",\n  \"password\": \"Agent@12345\",\n  \"email\": \"mikeagent@example.com\",\n  \"mobileNumber\": \"9876543212\",\n  \"gender\": \"MALE\",\n  \"dateOfBirth\": \"1988-03-10\"\n}" } } },
+        { "name": "1.04 Register Customer", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{devUrl}}/auth/register?tempRole=CUSTOMER", "host": ["{{devUrl}}"], "path": ["auth", "register"], "query": [{ "key": "tempRole", "value": "CUSTOMER" }] }, "body": { "mode": "raw", "raw": "{\n  \"firstName\": \"Alice\",\n  \"lastName\": \"Customer\",\n  \"username\": \"alice@cust1\",\n  \"password\": \"Customer@1234\",\n  \"email\": \"alicecust@example.com\",\n  \"mobileNumber\": \"9876543213\",\n  \"gender\": \"FEMALE\",\n  \"dateOfBirth\": \"1995-11-25\"\n}" } } },
+        { "name": "1.05 Login as Agent", "event": [{ "listen": "test", "script": { "exec": ["var json = pm.response.json();\npm.collectionVariables.set('agentToken', json.accessToken);"] } }], "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{devUrl}}/auth/login", "host": ["{{devUrl}}"], "path": ["auth", "login"] }, "body": { "mode": "raw", "raw": "{\n  \"usernameOrEmail\": \"mike@agent1\",\n  \"password\": \"Agent@12345\",\n  \"role\": \"AGENT\"\n}" } } },
+        { "name": "1.06 Login as Customer", "event": [{ "listen": "test", "script": { "exec": ["var json = pm.response.json();\npm.collectionVariables.set('customerToken', json.accessToken);"] } }], "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{devUrl}}/auth/login", "host": ["{{devUrl}}"], "path": ["auth", "login"] }, "body": { "mode": "raw", "raw": "{\n  \"usernameOrEmail\": \"alice@cust1\",\n  \"password\": \"Customer@1234\",\n  \"role\": \"CUSTOMER\"\n}" } } },
+        { "name": "1.07 Login as Employee", "event": [{ "listen": "test", "script": { "exec": ["var json = pm.response.json();\npm.collectionVariables.set('employeeToken', json.accessToken);"] } }], "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{devUrl}}/auth/login", "host": ["{{devUrl}}"], "path": ["auth", "login"] }, "body": { "mode": "raw", "raw": "{\n  \"usernameOrEmail\": \"jane@emp1\",\n  \"password\": \"Employee@1234\",\n  \"role\": \"EMPLOYEE\"\n}" } } },
+        { "name": "1.08 Get Logged User", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/auth/loggedUser", "host": ["{{devUrl}}"], "path": ["auth", "loggedUser"] } } },
+        { "name": "1.09 Validate Token", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/auth/user?role=ADMIN", "host": ["{{devUrl}}"], "path": ["auth", "user"], "query": [{ "key": "role", "value": "ADMIN" }] } } },
         {
-          "name": "1.1 Register Admin",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": {
-              "raw": "{{baseUrl}}/auth/register?tempRole=ADMIN",
-              "host": ["{{baseUrl}}"],
-              "path": ["auth", "register"],
-              "query": [{ "key": "tempRole", "value": "ADMIN" }]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Admin\",\n  \"username\": \"john@admin1\",\n  \"password\": \"Admin@1234\",\n  \"email\": \"johnadmin@example.com\",\n  \"mobileNumber\": \"9876543210\",\n  \"gender\": \"MALE\",\n  \"dateOfBirth\": \"1990-05-15\"\n}"
-            }
-          }
-        },
-        {
-          "name": "1.2 Login as Admin",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": ["var json = pm.response.json();\npm.collectionVariables.set('adminToken', json.accessToken);"]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"usernameOrEmail\": \"john@admin1\",\n  \"password\": \"Admin@1234\",\n  \"role\": \"ADMIN\"\n}"
-            }
-          }
-        },
-        {
-          "name": "1.3 Register Employee",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": {
-              "raw": "{{baseUrl}}/auth/register?tempRole=EMPLOYEE",
-              "host": ["{{baseUrl}}"],
-              "path": ["auth", "register"],
-              "query": [{ "key": "tempRole", "value": "EMPLOYEE" }]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Employee\",\n  \"username\": \"jane@emp1\",\n  \"password\": \"Employee@1234\",\n  \"email\": \"janeemp@example.com\",\n  \"mobileNumber\": \"9876543211\",\n  \"gender\": \"FEMALE\",\n  \"dateOfBirth\": \"1992-08-20\"\n}"
-            }
-          }
-        },
-        {
-          "name": "1.4 Register Agent",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": {
-              "raw": "{{baseUrl}}/auth/register?tempRole=AGENT",
-              "host": ["{{baseUrl}}"],
-              "path": ["auth", "register"],
-              "query": [{ "key": "tempRole", "value": "AGENT" }]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"firstName\": \"Mike\",\n  \"lastName\": \"Agent\",\n  \"username\": \"mike@agent1\",\n  \"password\": \"Agent@12345\",\n  \"email\": \"mikeagent@example.com\",\n  \"mobileNumber\": \"9876543212\",\n  \"gender\": \"MALE\",\n  \"dateOfBirth\": \"1988-03-10\"\n}"
-            }
-          }
-        },
-        {
-          "name": "1.5 Register Customer",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": {
-              "raw": "{{baseUrl}}/auth/register?tempRole=CUSTOMER",
-              "host": ["{{baseUrl}}"],
-              "path": ["auth", "register"],
-              "query": [{ "key": "tempRole", "value": "CUSTOMER" }]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"firstName\": \"Alice\",\n  \"lastName\": \"Customer\",\n  \"username\": \"alice@cust1\",\n  \"password\": \"Customer@1234\",\n  \"email\": \"alicecust@example.com\",\n  \"mobileNumber\": \"9876543213\",\n  \"gender\": \"FEMALE\",\n  \"dateOfBirth\": \"1995-11-25\"\n}"
-            }
-          }
-        },
-        {
-          "name": "1.6 Login as Employee",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": ["var json = pm.response.json();\npm.collectionVariables.set('employeeToken', json.accessToken);"]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"usernameOrEmail\": \"jane@emp1\",\n  \"password\": \"Employee@1234\",\n  \"role\": \"EMPLOYEE\"\n}"
-            }
-          }
-        },
-        {
-          "name": "1.7 Login as Customer",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": ["var json = pm.response.json();\npm.collectionVariables.set('customerToken', json.accessToken);"]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"usernameOrEmail\": \"alice@cust1\",\n  \"password\": \"Customer@1234\",\n  \"role\": \"CUSTOMER\"\n}"
-            }
-          }
-        },
-        {
-          "name": "1.8 Login as Agent",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": ["var json = pm.response.json();\npm.collectionVariables.set('agentToken', json.accessToken);"]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"usernameOrEmail\": \"mike@agent1\",\n  \"password\": \"Agent@12345\",\n  \"role\": \"AGENT\"\n}"
-            }
-          }
-        },
-        {
-          "name": "1.9 Get Logged User",
+          "name": "1.10 Send OTP",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
-            "url": { "raw": "{{baseUrl}}/auth/loggedUser", "host": ["{{baseUrl}}"], "path": ["auth", "loggedUser"] }
+            "url": {
+              "raw": "{{devUrl}}/auth/send-otp?sourceType=email&sourceValue=johnadmin@example.com",
+              "host": ["{{devUrl}}"],
+              "path": ["auth", "send-otp"],
+              "query": [
+                { "key": "sourceType", "value": "email" },
+                { "key": "sourceValue", "value": "johnadmin@example.com" }
+              ]
+            }
           }
-        }
+        },
+        { "name": "1.11 Forget Password", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{devUrl}}/auth/forget-Password", "host": ["{{devUrl}}"], "path": ["auth", "forget-Password"] }, "body": { "mode": "raw", "raw": "{\n  \"userName\": \"john@admin1\",\n  \"sourceType\": \"email\",\n  \"sourceValue\": \"johnadmin@example.com\",\n  \"otpReceived\": \"123456\",\n  \"password\": \"NewAdmin@1234\"\n}" } } },
+        { "name": "1.12 Change Password", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{devUrl}}/auth/change-Password", "host": ["{{devUrl}}"], "path": ["auth", "change-Password"] }, "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"username\": \"john@admin1\",\n  \"password\": \"Admin@1234\"\n}" } } },
+        { "name": "1.13 Logout", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/auth/logout", "host": ["{{devUrl}}"], "path": ["auth", "logout"] } } }
       ]
     },
+
     {
-      "name": "2. States & Cities",
+      "name": "2. Admin Management",
       "item": [
         {
-          "name": "2.1 Add State - Maharashtra",
+          "name": "2.1 Add Admin",
           "request": {
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{adminToken}}" }
             ],
-            "url": { "raw": "{{baseUrl}}/state", "host": ["{{baseUrl}}"], "path": ["state"] },
+            "url": { "raw": "{{devUrl}}/admin?role=ADMIN", "host": ["{{devUrl}}"], "path": ["admin"], "query": [{ "key": "role", "value": "ADMIN" }] },
+            "body": { "mode": "raw", "raw": "{\n  \"firstName\": \"Super\",\n  \"lastName\": \"Admin\",\n  \"username\": \"super@admin\",\n  \"password\": \"SuperAdmin@1234\",\n  \"email\": \"superadmin@example.com\",\n  \"mobileNumber\": \"9876543299\",\n  \"gender\": \"MALE\",\n  \"dateOfBirth\": \"1985-01-01\"\n}" }
+          }
+        },
+        { "name": "2.2 Get All Admins", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/admin", "host": ["{{devUrl}}"], "path": ["admin"] } } },
+        { "name": "2.3 Get Admin by ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/admin/1", "host": ["{{devUrl}}"], "path": ["admin", "1"] } } },
+        { "name": "2.4 Get Logged Admin", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/admin/logged", "host": ["{{devUrl}}"], "path": ["admin", "logged"] } } },
+        {
+          "name": "2.5 Update Admin",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": { "raw": "{{devUrl}}/admin", "host": ["{{devUrl}}"], "path": ["admin"] },
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"firstName\": \"John\",\n  \"lastName\": \"AdminUpdated\",\n  \"username\": \"john@admin1\",\n  \"email\": \"johnadmin@example.com\",\n  \"mobileNumber\": \"9876543210\",\n  \"gender\": \"MALE\",\n  \"dateOfBirth\": \"1990-05-15\"\n}" }
+          }
+        },
+        { "name": "2.6 Activate Admin", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/admin/activate/1", "host": ["{{devUrl}}"], "path": ["admin", "activate", "1"] } } },
+        { "name": "2.7 Delete Admin", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/admin/2", "host": ["{{devUrl}}"], "path": ["admin", "2"] } } },
+        { "name": "2.8 Count Report", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/admin/count", "host": ["{{devUrl}}"], "path": ["admin", "count"] } } }
+      ]
+    },
+    {
+      "name": "3. Employee Management",
+      "item": [
+        {
+          "name": "3.1 Add Employee (Admin only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": { "raw": "{{devUrl}}/employee?role=EMPLOYEE", "host": ["{{devUrl}}"], "path": ["employee"], "query": [{ "key": "role", "value": "EMPLOYEE" }] },
+            "body": { "mode": "raw", "raw": "{\n  \"salary\": 50000,\n  \"userDto\": {\n    \"firstName\": \"Jane\",\n    \"lastName\": \"Employee\",\n    \"username\": \"jane@emp1\",\n    \"password\": \"Employee@1234\",\n    \"email\": \"janeemp@example.com\",\n    \"mobileNumber\": \"9876543211\",\n    \"gender\": \"FEMALE\",\n    \"dateOfBirth\": \"1992-08-20\"\n  }\n}" }
+          }
+        },
+        { "name": "3.2 Get All Employees", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/employee", "host": ["{{devUrl}}"], "path": ["employee"] } } },
+        { "name": "3.3 Get Employee by ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/employee/1", "host": ["{{devUrl}}"], "path": ["employee", "1"] } } },
+        { "name": "3.4 Get Logged Employee", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{employeeToken}}" }], "url": { "raw": "{{devUrl}}/employee/logged", "host": ["{{devUrl}}"], "path": ["employee", "logged"] } } },
+        {
+          "name": "3.5 Update Employee",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": { "raw": "{{devUrl}}/employee", "host": ["{{devUrl}}"], "path": ["employee"] },
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"salary\": 55000,\n  \"userDto\": {\n    \"id\": 2,\n    \"firstName\": \"Jane\",\n    \"lastName\": \"EmployeeUpdated\",\n    \"username\": \"jane@emp1\",\n    \"email\": \"janeemp@example.com\",\n    \"mobileNumber\": \"9876543211\",\n    \"gender\": \"FEMALE\",\n    \"dateOfBirth\": \"1992-08-20\"\n  }\n}" }
+          }
+        },
+        { "name": "3.6 Activate Employee", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/employee/activate/1", "host": ["{{devUrl}}"], "path": ["employee", "activate", "1"] } } },
+        { "name": "3.7 Delete Employee", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/employee/1", "host": ["{{devUrl}}"], "path": ["employee", "1"] } } }
+      ]
+    },
+
+    {
+      "name": "4. Agent Management",
+      "item": [
+        {
+          "name": "4.1 Add Agent (Admin/Employee)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": { "raw": "{{devUrl}}/agent?role=AGENT", "host": ["{{devUrl}}"], "path": ["agent"], "query": [{ "key": "role", "value": "AGENT" }] },
+            "body": { "mode": "raw", "raw": "{\n  \"accountNumber\": \"1234567890\",\n  \"bankName\": \"State Bank\",\n  \"ifscCode\": \"SBIN0001234\",\n  \"userDto\": {\n    \"firstName\": \"Bob\",\n    \"lastName\": \"Agent\",\n    \"username\": \"bob@agent2\",\n    \"password\": \"Agent@12345\",\n    \"email\": \"bobagent@example.com\",\n    \"mobileNumber\": \"9876543214\",\n    \"gender\": \"MALE\",\n    \"dateOfBirth\": \"1990-06-15\"\n  }\n}" }
+          }
+        },
+        { "name": "4.2 Get All Agents", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/agent", "host": ["{{devUrl}}"], "path": ["agent"] } } },
+        { "name": "4.3 Get Agent by ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/agent/1", "host": ["{{devUrl}}"], "path": ["agent", "1"] } } },
+        { "name": "4.4 Get Logged Agent", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{agentToken}}" }], "url": { "raw": "{{devUrl}}/agent/loggedAgent", "host": ["{{devUrl}}"], "path": ["agent", "loggedAgent"] } } },
+        {
+          "name": "4.5 Update Agent",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": { "raw": "{{devUrl}}/agent", "host": ["{{devUrl}}"], "path": ["agent"] },
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"accountNumber\": \"1234567890\",\n  \"bankName\": \"State Bank Updated\",\n  \"ifscCode\": \"SBIN0001234\",\n  \"userDto\": {\n    \"id\": 3,\n    \"firstName\": \"Mike\",\n    \"lastName\": \"AgentUpdated\",\n    \"username\": \"mike@agent1\",\n    \"email\": \"mikeagent@example.com\",\n    \"mobileNumber\": \"9876543212\",\n    \"gender\": \"MALE\",\n    \"dateOfBirth\": \"1988-03-10\"\n  }\n}" }
+          }
+        },
+        { "name": "4.6 Activate Agent", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/agent/activate/1", "host": ["{{devUrl}}"], "path": ["agent", "activate", "1"] } } },
+        { "name": "4.7 Delete Agent", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/agent/1", "host": ["{{devUrl}}"], "path": ["agent", "1"] } } }
+      ]
+    },
+    {
+      "name": "5. Agent Withdrawals",
+      "item": [
+        {
+          "name": "5.1 Claim Withdrawal",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{agentToken}}" }
+            ],
+            "url": { "raw": "{{devUrl}}/agent/withdrawal/1?amount=5000", "host": ["{{devUrl}}"], "path": ["agent", "withdrawal", "1"], "query": [{ "key": "amount", "value": "5000" }] },
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"accountNumber\": \"1234567890\",\n  \"bankName\": \"State Bank\",\n  \"ifscCode\": \"SBIN0001234\",\n  \"userDto\": { \"id\": 3, \"firstName\": \"Mike\", \"lastName\": \"Agent\" }\n}" }
+          }
+        },
+        { "name": "5.2 Approve Withdrawal", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/agent/withdrawal/approve/1?remarks=Approved", "host": ["{{devUrl}}"], "path": ["agent", "withdrawal", "approve", "1"], "query": [{ "key": "remarks", "value": "Approved" }] } } },
+        { "name": "5.3 Reject Withdrawal", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/agent/withdrawal/reject/1?remarks=Insufficient+balance", "host": ["{{devUrl}}"], "path": ["agent", "withdrawal", "reject", "1"], "query": [{ "key": "remarks", "value": "Insufficient balance" }] } } },
+        { "name": "5.4 Get All Withdrawal Requests", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/agent/withdrawal-requests", "host": ["{{devUrl}}"], "path": ["agent", "withdrawal-requests"] } } },
+        { "name": "5.5 Get My Withdrawals (Agent)", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{agentToken}}" }], "url": { "raw": "{{devUrl}}/agent/allwithdrawal", "host": ["{{devUrl}}"], "path": ["agent", "allwithdrawal"] } } },
+        { "name": "5.6 Agent All Commissions", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{agentToken}}" }], "url": { "raw": "{{devUrl}}/policy/all-commission", "host": ["{{devUrl}}"], "path": ["policy", "all-commission"] } } },
+        { "name": "5.7 Agent All Clients", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{agentToken}}" }], "url": { "raw": "{{devUrl}}/policy/all-clients", "host": ["{{devUrl}}"], "path": ["policy", "all-clients"] } } }
+      ]
+    },
+
+    {
+      "name": "6. Customer Management",
+      "item": [
+        {
+          "name": "6.1 Add Customer (Admin/Employee/Agent)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": { "raw": "{{devUrl}}/customer?role=CUSTOMER", "host": ["{{devUrl}}"], "path": ["customer"], "query": [{ "key": "role", "value": "CUSTOMER" }] },
+            "body": { "mode": "raw", "raw": "{\n  \"firstName\": \"Bob\",\n  \"lastName\": \"Customer\",\n  \"username\": \"bob@cust2\",\n  \"password\": \"Customer@1234\",\n  \"email\": \"bobcust@example.com\",\n  \"mobileNumber\": \"9876543215\",\n  \"gender\": \"MALE\",\n  \"dateOfBirth\": \"1993-07-20\"\n}" }
+          }
+        },
+        { "name": "6.2 Get All Customers", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/customer", "host": ["{{devUrl}}"], "path": ["customer"] } } },
+        { "name": "6.3 Get Customer by ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/customer/1", "host": ["{{devUrl}}"], "path": ["customer", "1"] } } },
+        { "name": "6.4 Get Logged Customer", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }], "url": { "raw": "{{devUrl}}/customer/logged", "host": ["{{devUrl}}"], "path": ["customer", "logged"] } } },
+        {
+          "name": "6.5 Update Customer",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": { "raw": "{{devUrl}}/customer", "host": ["{{devUrl}}"], "path": ["customer"] },
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 4,\n  \"firstName\": \"Alice\",\n  \"lastName\": \"CustomerUpdated\",\n  \"username\": \"alice@cust1\",\n  \"email\": \"alicecust@example.com\",\n  \"mobileNumber\": \"9876543213\",\n  \"gender\": \"FEMALE\",\n  \"dateOfBirth\": \"1995-11-25\"\n}" }
+          }
+        },
+        { "name": "6.6 Activate Customer", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/customer/activate/1", "host": ["{{devUrl}}"], "path": ["customer", "activate", "1"] } } },
+        { "name": "6.7 Delete Customer", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/customer/1", "host": ["{{devUrl}}"], "path": ["customer", "1"] } } },
+        {
+          "name": "6.8 Buy Policy (Customer without Agent)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "url": { "raw": "{{devUrl}}/customer/1/Insurance-Scheme/1/policy", "host": ["{{devUrl}}"], "path": ["customer", "1", "Insurance-Scheme", "1", "policy"] },
+            "body": { "mode": "raw", "raw": "{\n  \"premiumType\": \"MONTHLY\",\n  \"policyAmount\": 100000,\n  \"time\": 10,\n  \"premiumAmount\": 1000,\n  \"nomineeName\": \"John Doe\",\n  \"relationStatusWithNominee\": \"Father\",\n  \"submittedDocumentsDto\": []\n}" }
+          }
+        },
+        {
+          "name": "6.9 Buy Policy (by Agent for Customer)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{agentToken}}" }
+            ],
+            "url": { "raw": "{{devUrl}}/customer/1/Insurance-Scheme/1/agent/1/policy", "host": ["{{devUrl}}"], "path": ["customer", "1", "Insurance-Scheme", "1", "agent", "1", "policy"] },
+            "body": { "mode": "raw", "raw": "{\n  \"premiumType\": \"YEARLY\",\n  \"policyAmount\": 200000,\n  \"time\": 15,\n  \"premiumAmount\": 15000,\n  \"nomineeName\": \"Jane Doe\",\n  \"relationStatusWithNominee\": \"Spouse\",\n  \"submittedDocumentsDto\": []\n}" }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "7. States",
+      "item": [
+        {
+          "name": "7.1 Add State - Maharashtra",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": { "raw": "{{devUrl}}/state", "host": ["{{devUrl}}"], "path": ["state"] },
             "body": { "mode": "raw", "raw": "{\n  \"name\": \"Maharashtra\",\n  \"active\": true\n}" }
           }
         },
         {
-          "name": "2.2 Add State - Karnataka",
+          "name": "7.2 Add State - Karnataka",
           "request": {
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{adminToken}}" }
             ],
-            "url": { "raw": "{{baseUrl}}/state", "host": ["{{baseUrl}}"], "path": ["state"] },
+            "url": { "raw": "{{devUrl}}/state", "host": ["{{devUrl}}"], "path": ["state"] },
             "body": { "mode": "raw", "raw": "{\n  \"name\": \"Karnataka\",\n  \"active\": true\n}" }
           }
         },
+        { "name": "7.3 Get All States", "request": { "method": "GET", "url": { "raw": "{{devUrl}}/state", "host": ["{{devUrl}}"], "path": ["state"] } } },
+        { "name": "7.4 Get State by ID", "request": { "method": "GET", "url": { "raw": "{{devUrl}}/state/1", "host": ["{{devUrl}}"], "path": ["state", "1"] } } },
         {
-          "name": "2.3 Get All States",
+          "name": "7.5 Update State",
           "request": {
-            "method": "GET",
-            "url": { "raw": "{{baseUrl}}/state", "host": ["{{baseUrl}}"], "path": ["state"] }
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": { "raw": "{{devUrl}}/state", "host": ["{{devUrl}}"], "path": ["state"] },
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"name\": \"Maharashtra Updated\",\n  \"active\": true\n}" }
           }
         },
+        { "name": "7.6 Delete State", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/state/1", "host": ["{{devUrl}}"], "path": ["state", "1"] } } },
+        { "name": "7.7 Activate State", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/state/activate/1", "host": ["{{devUrl}}"], "path": ["state", "activate", "1"] } } }
+      ]
+    },
+    {
+      "name": "8. Cities",
+      "item": [
         {
-          "name": "2.4 Add City - Mumbai (stateId=1)",
+          "name": "8.01 Add City - Mumbai (state=1)",
           "request": {
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{adminToken}}" }
             ],
-            "url": { "raw": "{{baseUrl}}/city/1", "host": ["{{baseUrl}}"], "path": ["city", "1"] },
+            "url": { "raw": "{{devUrl}}/city/1", "host": ["{{devUrl}}"], "path": ["city", "1"] },
             "body": { "mode": "raw", "raw": "{\n  \"pincode\": 400001,\n  \"name\": \"Mumbai\",\n  \"active\": true\n}" }
           }
         },
         {
-          "name": "2.5 Add City - Pune (stateId=1)",
+          "name": "8.02 Add City - Pune (state=1)",
           "request": {
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{adminToken}}" }
             ],
-            "url": { "raw": "{{baseUrl}}/city/1", "host": ["{{baseUrl}}"], "path": ["city", "1"] },
+            "url": { "raw": "{{devUrl}}/city/1", "host": ["{{devUrl}}"], "path": ["city", "1"] },
             "body": { "mode": "raw", "raw": "{\n  \"pincode\": 411001,\n  \"name\": \"Pune\",\n  \"active\": true\n}" }
           }
         },
         {
-          "name": "2.6 Add City - Bangalore (stateId=2)",
+          "name": "8.03 Add City - Bangalore (state=2)",
           "request": {
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{adminToken}}" }
             ],
-            "url": { "raw": "{{baseUrl}}/city/2", "host": ["{{baseUrl}}"], "path": ["city", "2"] },
+            "url": { "raw": "{{devUrl}}/city/2", "host": ["{{devUrl}}"], "path": ["city", "2"] },
             "body": { "mode": "raw", "raw": "{\n  \"pincode\": 560001,\n  \"name\": \"Bangalore\",\n  \"active\": true\n}" }
           }
         },
+        { "name": "8.04 Get All Cities of State", "request": { "method": "GET", "url": { "raw": "{{devUrl}}/city/1", "host": ["{{devUrl}}"], "path": ["city", "1"] } } },
+        { "name": "8.05 Get City by State+City ID", "request": { "method": "GET", "url": { "raw": "{{devUrl}}/city/1/1", "host": ["{{devUrl}}"], "path": ["city", "1", "1"] } } },
         {
-          "name": "2.7 Get Cities of State 1",
+          "name": "8.06 Update City",
           "request": {
-            "method": "GET",
-            "url": { "raw": "{{baseUrl}}/city/1", "host": ["{{baseUrl}}"], "path": ["city", "1"] }
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": { "raw": "{{devUrl}}/city/1", "host": ["{{devUrl}}"], "path": ["city", "1"] },
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"pincode\": 400001,\n  \"name\": \"Mumbai Updated\",\n  \"active\": true\n}" }
           }
-        }
+        },
+        { "name": "8.07 Delete City", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/city/1/1", "host": ["{{devUrl}}"], "path": ["city", "1", "1"] } } },
+        { "name": "8.08 Activate City", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/city/activate/1/1", "host": ["{{devUrl}}"], "path": ["city", "activate", "1", "1"] } } },
+        { "name": "8.09 Add Scheme to City", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/city/400001/scheme/1", "host": ["{{devUrl}}"], "path": ["city", "400001", "scheme", "1"] } } },
+        { "name": "8.10 Remove Scheme from City", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/city/400001/scheme/1", "host": ["{{devUrl}}"], "path": ["city", "400001", "scheme", "1"] } } }
       ]
     },
+
     {
-      "name": "3. Insurance Plans",
+      "name": "9. Insurance Plans",
       "item": [
         {
-          "name": "3.1 Create Plan - Life Insurance",
+          "name": "9.1 Create Plan - Life Insurance",
           "request": {
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{adminToken}}" }
             ],
-            "url": { "raw": "{{baseUrl}}/plan", "host": ["{{baseUrl}}"], "path": ["plan"] },
+            "url": { "raw": "{{devUrl}}/plan", "host": ["{{devUrl}}"], "path": ["plan"] },
             "body": { "mode": "raw", "raw": "{\n  \"planName\": \"Life Insurance\",\n  \"active\": true\n}" }
           }
         },
         {
-          "name": "3.2 Create Plan - Health Insurance",
+          "name": "9.2 Create Plan - Health Insurance",
           "request": {
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{adminToken}}" }
             ],
-            "url": { "raw": "{{baseUrl}}/plan", "host": ["{{baseUrl}}"], "path": ["plan"] },
+            "url": { "raw": "{{devUrl}}/plan", "host": ["{{devUrl}}"], "path": ["plan"] },
             "body": { "mode": "raw", "raw": "{\n  \"planName\": \"Health Insurance\",\n  \"active\": true\n}" }
           }
         },
+        { "name": "9.3 Get All Plans", "request": { "method": "GET", "url": { "raw": "{{devUrl}}/plan", "host": ["{{devUrl}}"], "path": ["plan"] } } },
+        { "name": "9.4 Get Plan by ID", "request": { "method": "GET", "url": { "raw": "{{devUrl}}/plan/1", "host": ["{{devUrl}}"], "path": ["plan", "1"] } } },
         {
-          "name": "3.3 Get All Plans",
+          "name": "9.5 Update Plan",
           "request": {
-            "method": "GET",
-            "url": { "raw": "{{baseUrl}}/plan", "host": ["{{baseUrl}}"], "path": ["plan"] }
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": { "raw": "{{devUrl}}/plan", "host": ["{{devUrl}}"], "path": ["plan"] },
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"planName\": \"Life Insurance Premium\",\n  \"active\": true\n}" }
           }
-        }
+        },
+        { "name": "9.6 Delete Plan", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/plan/1", "host": ["{{devUrl}}"], "path": ["plan", "1"] } } },
+        { "name": "9.7 Activate Plan", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/plan/activate/1", "host": ["{{devUrl}}"], "path": ["plan", "activate", "1"] } } }
       ]
     },
     {
-      "name": "4. Insurance Schemes",
+      "name": "10. Insurance Schemes",
       "item": [
         {
-          "name": "4.1 Create Scheme - Term Life (planId=1)",
+          "name": "10.01 Create Scheme (planId=1)",
           "request": {
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{adminToken}}" }
             ],
-            "url": { "raw": "{{baseUrl}}/scheme/1", "host": ["{{baseUrl}}"], "path": ["scheme", "1"] },
+            "url": { "raw": "{{devUrl}}/scheme/1", "host": ["{{devUrl}}"], "path": ["scheme", "1"] },
             "body": { "mode": "raw", "raw": "{\n  \"schemeName\": \"Term Life Plan\",\n  \"schemeImage\": \"https://via.placeholder.com/150\",\n  \"description\": \"A basic term life insurance plan with affordable premiums\",\n  \"minAmount\": 50000,\n  \"maxAmount\": 1000000,\n  \"minInvestmentTime\": 5,\n  \"maxInvestmentTime\": 30,\n  \"minAge\": 18,\n  \"maxAge\": 60,\n  \"profitRatio\": 10.0,\n  \"registrationCommissionRatio\": 5.0,\n  \"installmentCommissionRatio\": 2.0,\n  \"documents\": []\n}" }
           }
         },
         {
-          "name": "4.2 Create Scheme - Health Basic (planId=2)",
+          "name": "10.02 Create Scheme (planId=2)",
           "request": {
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{adminToken}}" }
             ],
-            "url": { "raw": "{{baseUrl}}/scheme/2", "host": ["{{baseUrl}}"], "path": ["scheme", "2"] },
+            "url": { "raw": "{{devUrl}}/scheme/2", "host": ["{{devUrl}}"], "path": ["scheme", "2"] },
             "body": { "mode": "raw", "raw": "{\n  \"schemeName\": \"Health Basic Plan\",\n  \"schemeImage\": \"https://via.placeholder.com/150\",\n  \"description\": \"Basic health insurance covering hospitalization\",\n  \"minAmount\": 25000,\n  \"maxAmount\": 500000,\n  \"minInvestmentTime\": 1,\n  \"maxInvestmentTime\": 20,\n  \"minAge\": 18,\n  \"maxAge\": 65,\n  \"profitRatio\": 8.0,\n  \"registrationCommissionRatio\": 4.0,\n  \"installmentCommissionRatio\": 1.5,\n  \"documents\": []\n}" }
           }
         },
+        { "name": "10.03 Get All Schemes", "request": { "method": "GET", "url": { "raw": "{{devUrl}}/scheme", "host": ["{{devUrl}}"], "path": ["scheme"] } } },
+        { "name": "10.04 Get Schemes by Plan ID", "request": { "method": "GET", "url": { "raw": "{{devUrl}}/scheme/1", "host": ["{{devUrl}}"], "path": ["scheme", "1"] } } },
+        { "name": "10.05 Get Specific Scheme", "request": { "method": "GET", "url": { "raw": "{{devUrl}}/scheme/1/1", "host": ["{{devUrl}}"], "path": ["scheme", "1", "1"] } } },
         {
-          "name": "4.3 Get Schemes by Plan 1",
+          "name": "10.06 Update Scheme",
           "request": {
-            "method": "GET",
-            "url": { "raw": "{{baseUrl}}/scheme/1", "host": ["{{baseUrl}}"], "path": ["scheme", "1"] }
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": { "raw": "{{devUrl}}/scheme/1", "host": ["{{devUrl}}"], "path": ["scheme", "1"] },
+            "body": { "mode": "raw", "raw": "{\n  \"schemeId\": 1,\n  \"schemeName\": \"Term Life Plan Updated\",\n  \"schemeImage\": \"https://via.placeholder.com/150\",\n  \"description\": \"Updated term life plan\",\n  \"minAmount\": 50000,\n  \"maxAmount\": 1500000,\n  \"minInvestmentTime\": 5,\n  \"maxInvestmentTime\": 30,\n  \"minAge\": 18,\n  \"maxAge\": 60,\n  \"profitRatio\": 12.0,\n  \"registrationCommissionRatio\": 5.0,\n  \"installmentCommissionRatio\": 2.0,\n  \"documents\": []\n}" }
           }
         },
+        { "name": "10.07 Delete Scheme", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/scheme/1/1", "host": ["{{devUrl}}"], "path": ["scheme", "1", "1"] } } },
+        { "name": "10.08 Activate Scheme", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/scheme/activate/1/1", "host": ["{{devUrl}}"], "path": ["scheme", "activate", "1", "1"] } } },
         {
-          "name": "4.4 Get All Schemes",
+          "name": "10.09 Update Commission",
           "request": {
-            "method": "GET",
+            "method": "PUT",
             "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
-            "url": { "raw": "{{baseUrl}}/scheme", "host": ["{{baseUrl}}"], "path": ["scheme"] }
+            "url": {
+              "raw": "{{devUrl}}/scheme/update-commission/1/1?installmentRatio=3.0&registrationAmount=6.0&profitRatio=12.0",
+              "host": ["{{devUrl}}"],
+              "path": ["scheme", "update-commission", "1", "1"],
+              "query": [
+                { "key": "installmentRatio", "value": "3.0" },
+                { "key": "registrationAmount", "value": "6.0" },
+                { "key": "profitRatio", "value": "12.0" }
+              ]
+            }
           }
-        }
+        },
+        { "name": "10.10 Update Scheme Image", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/scheme/update-scheme-image/1/1?schemeImage=https://newimage.com/img.png", "host": ["{{devUrl}}"], "path": ["scheme", "update-scheme-image", "1", "1"], "query": [{ "key": "schemeImage", "value": "https://newimage.com/img.png" }] } } }
       ]
     },
+
     {
-      "name": "5. Tax Setup",
+      "name": "11. Tax",
       "item": [
         {
-          "name": "5.1 Set Tax Rate",
+          "name": "11.1 Set Tax Rate",
           "request": {
             "method": "POST",
             "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
             "url": {
-              "raw": "{{baseUrl}}/tax/set-tax?taxRate=18&deductionRate=5",
-              "host": ["{{baseUrl}}"],
+              "raw": "{{devUrl}}/tax/set-tax?taxRate=18&deductionRate=5",
+              "host": ["{{devUrl}}"],
               "path": ["tax", "set-tax"],
               "query": [
                 { "key": "taxRate", "value": "18" },
@@ -351,86 +467,132 @@
             }
           }
         },
-        {
-          "name": "5.2 Get Tax",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
-            "url": { "raw": "{{baseUrl}}/tax/get-tax", "host": ["{{baseUrl}}"], "path": ["tax", "get-tax"] }
-          }
-        }
+        { "name": "11.2 Get Tax", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/tax/get-tax", "host": ["{{devUrl}}"], "path": ["tax", "get-tax"] } } }
       ]
     },
     {
-      "name": "6. Admin Management",
+      "name": "12. Policies",
       "item": [
+        { "name": "12.1 Get All Policies", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/policy", "host": ["{{devUrl}}"], "path": ["policy"] } } },
+        { "name": "12.2 Get Policy by ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/policy/POLICY_ID_HERE", "host": ["{{devUrl}}"], "path": ["policy", "POLICY_ID_HERE"] } } },
+        { "name": "12.3 Get All Commissions (Admin/Employee)", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/policy/commission", "host": ["{{devUrl}}"], "path": ["policy", "commission"] } } },
+        { "name": "12.4 Policy Report (Admin)", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/policy/policy-report", "host": ["{{devUrl}}"], "path": ["policy", "policy-report"] } } },
         {
-          "name": "6.1 Get All Admins",
+          "name": "12.5 Update Documents (Customer)",
           "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
-            "url": { "raw": "{{baseUrl}}/admin", "host": ["{{baseUrl}}"], "path": ["admin"] }
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "url": { "raw": "{{devUrl}}/policy/POLICY_ID_HERE/update-document", "host": ["{{devUrl}}"], "path": ["policy", "POLICY_ID_HERE", "update-document"] },
+            "body": { "mode": "raw", "raw": "[\n  {\n    \"id\": 1,\n    \"documentName\": \"Aadhaar Card\",\n    \"documentStatus\": \"PENDING\",\n    \"documentImage\": \"https://cloudinary.com/doc-url\"\n  }\n]" }
           }
         },
         {
-          "name": "6.2 Get Admin Count Report",
+          "name": "12.6 Verify Policy (Employee)",
           "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
-            "url": { "raw": "{{baseUrl}}/admin/count", "host": ["{{baseUrl}}"], "path": ["admin", "count"] }
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{employeeToken}}" }
+            ],
+            "url": { "raw": "{{devUrl}}/policy/POLICY_ID_HERE/verify-policy", "host": ["{{devUrl}}"], "path": ["policy", "POLICY_ID_HERE", "verify-policy"] },
+            "body": { "mode": "raw", "raw": "[\n  {\n    \"id\": 1,\n    \"documentName\": \"Aadhaar Card\",\n    \"documentStatus\": \"APPROVED\",\n    \"documentImage\": \"https://cloudinary.com/doc-url\"\n  }\n]" }
           }
         }
       ]
     },
+
     {
-      "name": "7. Customer Management",
+      "name": "13. Claims",
       "item": [
         {
-          "name": "7.1 Get All Customers",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
-            "url": { "raw": "{{baseUrl}}/customer", "host": ["{{baseUrl}}"], "path": ["customer"] }
-          }
-        },
-        {
-          "name": "7.2 Get Customer by ID",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
-            "url": { "raw": "{{baseUrl}}/customer/1", "host": ["{{baseUrl}}"], "path": ["customer", "1"] }
-          }
-        }
-      ]
-    },
-    {
-      "name": "8. Payments",
-      "item": [
-        {
-          "name": "8.1 Create Razorpay Order",
+          "name": "13.1 Apply for Claim",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{baseUrl}}/payments/create-order", "host": ["{{baseUrl}}"], "path": ["payments", "create-order"] },
-            "body": { "mode": "raw", "raw": "{\n  \"policyId\": \"POLICY_ID_HERE\",\n  \"amount\": 5000,\n  \"tax\": 900,\n  \"totalPayment\": 5900,\n  \"paymentType\": \"debit\"\n}" }
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "url": { "raw": "{{devUrl}}/claim/customer/1/Insurance-policy/POLICY_ID_HERE", "host": ["{{devUrl}}"], "path": ["claim", "customer", "1", "Insurance-policy", "POLICY_ID_HERE"] },
+            "body": { "mode": "raw", "raw": "{\n  \"claimAmount\": 50000,\n  \"bankName\": \"State Bank of India\",\n  \"branchName\": \"Mumbai Main\",\n  \"bankAccountNumber\": \"1234567890123\",\n  \"ifscCode\": \"SBIN0001234\"\n}" }
           }
         },
+        { "name": "13.2 Get All Claims", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/claim", "host": ["{{devUrl}}"], "path": ["claim"] } } },
+        { "name": "13.3 Get Claim by ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/claim/1", "host": ["{{devUrl}}"], "path": ["claim", "1"] } } },
         {
-          "name": "8.2 Get Payments by Policy ID",
+          "name": "13.4 Approve Claim",
           "request": {
-            "method": "GET",
+            "method": "PUT",
             "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
-            "url": { "raw": "{{baseUrl}}/payments/policies/POLICY_ID_HERE", "host": ["{{baseUrl}}"], "path": ["payments", "policies", "POLICY_ID_HERE"] }
+            "url": {
+              "raw": "{{devUrl}}/claim/approve/1?operation=APPROVE&message=Claim+approved",
+              "host": ["{{devUrl}}"],
+              "path": ["claim", "approve", "1"],
+              "query": [
+                { "key": "operation", "value": "APPROVE" },
+                { "key": "message", "value": "Claim approved" }
+              ]
+            }
           }
         },
         {
-          "name": "8.3 Get Revenue",
+          "name": "13.5 Reject Claim",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": {
+              "raw": "{{devUrl}}/claim/approve/1?operation=REJECT&message=Insufficient+documents",
+              "host": ["{{devUrl}}"],
+              "path": ["claim", "approve", "1"],
+              "query": [
+                { "key": "operation", "value": "REJECT" },
+                { "key": "message", "value": "Insufficient documents" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "14. Queries",
+      "item": [
+        { "name": "14.1 Create Query", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{devUrl}}/query", "host": ["{{devUrl}}"], "path": ["query"] }, "body": { "mode": "raw", "raw": "{\n  \"title\": \"Policy Inquiry\",\n  \"question\": \"What is the maturity amount for Term Life Plan?\",\n  \"email\": \"alicecust@example.com\"\n}" } } },
+        { "name": "14.2 Get All Queries", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/query", "host": ["{{devUrl}}"], "path": ["query"] } } },
+        { "name": "14.3 Get Queries by Customer Email", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }], "url": { "raw": "{{devUrl}}/query/alicecust@example.com", "host": ["{{devUrl}}"], "path": ["query", "alicecust@example.com"] } } },
+        {
+          "name": "14.4 Answer Query (Admin/Employee)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": { "raw": "{{devUrl}}/query/answer", "host": ["{{devUrl}}"], "path": ["query", "answer"] },
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"title\": \"Policy Inquiry\",\n  \"question\": \"What is the maturity amount for Term Life Plan?\",\n  \"answer\": \"The maturity amount depends on your policy amount and tenure.\",\n  \"queryResponse\": \"RESOLVED\",\n  \"email\": \"alicecust@example.com\"\n}" }
+          }
+        },
+        { "name": "14.5 Edit Query", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{devUrl}}/query/edit", "host": ["{{devUrl}}"], "path": ["query", "edit"] }, "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"title\": \"Updated Policy Inquiry\",\n  \"question\": \"What is the maturity amount and premium for Term Life Plan?\",\n  \"email\": \"alicecust@example.com\"\n}" } } },
+        { "name": "14.6 Delete Query", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/query/1", "host": ["{{devUrl}}"], "path": ["query", "1"] } } },
+        { "name": "14.7 Activate Query", "request": { "method": "PUT", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/query/activate/1", "host": ["{{devUrl}}"], "path": ["query", "activate", "1"] } } }
+      ]
+    },
+
+    {
+      "name": "15. Payments",
+      "item": [
+        { "name": "15.1 Create Razorpay Order", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{devUrl}}/payments/create-order", "host": ["{{devUrl}}"], "path": ["payments", "create-order"] }, "body": { "mode": "raw", "raw": "{\n  \"policyId\": \"POLICY_ID_HERE\",\n  \"amount\": 5000,\n  \"tax\": 900,\n  \"totalPayment\": 5900,\n  \"paymentType\": \"debit\"\n}" } } },
+        { "name": "15.2 Verify Payment", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{devUrl}}/payments/verify", "host": ["{{devUrl}}"], "path": ["payments", "verify"] }, "body": { "mode": "raw", "raw": "{\n  \"razorpay_order_id\": \"order_xxx\",\n  \"razorpay_payment_id\": \"pay_xxx\",\n  \"razorpay_signature\": \"signature_xxx\",\n  \"policyId\": \"POLICY_ID_HERE\"\n}" } } },
+        { "name": "15.3 Get Payments by Policy ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/payments/policies/POLICY_ID_HERE", "host": ["{{devUrl}}"], "path": ["payments", "policies", "POLICY_ID_HERE"] } } },
+        {
+          "name": "15.4 Get Revenue",
           "request": {
             "method": "GET",
             "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
             "url": {
-              "raw": "{{baseUrl}}/payments/revenue?startDate=2024-01-01T00:00:00&endDate=2026-12-31T23:59:59",
-              "host": ["{{baseUrl}}"],
+              "raw": "{{devUrl}}/payments/revenue?startDate=2024-01-01T00:00:00&endDate=2026-12-31T23:59:59",
+              "host": ["{{devUrl}}"],
               "path": ["payments", "revenue"],
               "query": [
                 { "key": "startDate", "value": "2024-01-01T00:00:00" },
@@ -442,87 +604,26 @@
       ]
     },
     {
-      "name": "9. Dashboard & Search",
+      "name": "16. Dashboard & Search",
       "item": [
-        {
-          "name": "9.1 Get Dashboard Summary",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
-            "url": { "raw": "{{baseUrl}}/dashboard/summary", "host": ["{{baseUrl}}"], "path": ["dashboard", "summary"] }
-          }
-        },
-        {
-          "name": "9.2 Global Search",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
-            "url": {
-              "raw": "{{baseUrl}}/search?keyword=Alice",
-              "host": ["{{baseUrl}}"],
-              "path": ["search"],
-              "query": [{ "key": "keyword", "value": "Alice" }]
-            }
-          }
-        }
+        { "name": "16.1 Dashboard Summary", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/dashboard/summary", "host": ["{{devUrl}}"], "path": ["dashboard", "summary"] } } },
+        { "name": "16.2 Global Search", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/search?keyword=Alice", "host": ["{{devUrl}}"], "path": ["search"], "query": [{ "key": "keyword", "value": "Alice" }] } } }
       ]
     },
     {
-      "name": "10. Policies",
+      "name": "17. Reports",
       "item": [
-        {
-          "name": "10.1 Get All Policies",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
-            "url": { "raw": "{{baseUrl}}/policy", "host": ["{{baseUrl}}"], "path": ["policy"] }
-          }
-        }
+        { "name": "17.1 Customer Excel Report", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/reports/customer/excel-report/download", "host": ["{{devUrl}}"], "path": ["reports", "customer", "excel-report", "download"] } } },
+        { "name": "17.2 Customer PDF Report", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/reports/customer/pdf-report/download", "host": ["{{devUrl}}"], "path": ["reports", "customer", "pdf-report", "download"] } } },
+        { "name": "17.3 Agent Excel Report", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/reports/agent/excel-report/download", "host": ["{{devUrl}}"], "path": ["reports", "agent", "excel-report", "download"] } } },
+        { "name": "17.4 Agent PDF Report", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }], "url": { "raw": "{{devUrl}}/reports/agent/pdf-report/download", "host": ["{{devUrl}}"], "path": ["reports", "agent", "pdf-report", "download"] } } }
       ]
     },
     {
-      "name": "11. File Upload",
+      "name": "18. File Upload",
       "item": [
-        {
-          "name": "11.1 Upload File",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": { "raw": "{{baseUrl}}/file/upload", "host": ["{{baseUrl}}"], "path": ["file", "upload"] },
-            "body": {
-              "mode": "formdata",
-              "formdata": [{ "key": "file", "type": "file", "src": "" }]
-            }
-          }
-        },
-        {
-          "name": "11.2 View File",
-          "request": {
-            "method": "GET",
-            "url": { "raw": "{{baseUrl}}/file/view/FILE_UUID_HERE", "host": ["{{baseUrl}}"], "path": ["file", "view", "FILE_UUID_HERE"] }
-          }
-        }
-      ]
-    },
-    {
-      "name": "12. Reports",
-      "item": [
-        {
-          "name": "12.1 Download Customer Excel Report",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
-            "url": { "raw": "{{baseUrl}}/reports/customer/excel-report/download", "host": ["{{baseUrl}}"], "path": ["reports", "customer", "excel-report", "download"] }
-          }
-        },
-        {
-          "name": "12.2 Download Customer PDF Report",
-          "request": {
-            "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
-            "url": { "raw": "{{baseUrl}}/reports/customer/pdf-report/download", "host": ["{{baseUrl}}"], "path": ["reports", "customer", "pdf-report", "download"] }
-          }
-        }
+        { "name": "18.1 Upload File", "request": { "method": "POST", "url": { "raw": "{{devUrl}}/file/upload", "host": ["{{devUrl}}"], "path": ["file", "upload"] }, "body": { "mode": "formdata", "formdata": [{ "key": "file", "type": "file", "src": "" }] } } },
+        { "name": "18.2 View File", "request": { "method": "GET", "url": { "raw": "{{devUrl}}/file/view/FILE_UUID_HERE", "host": ["{{devUrl}}"], "path": ["file", "view", "FILE_UUID_HERE"] } } }
       ]
     }
   ]

@@ -32,3 +32,7 @@ build/
 ### VS Code ###
 .vscode/
 logs
+
+# Secret properties - never push to git
+src/main/resources/application.properties
+src/main/resources/application-dev.properties
